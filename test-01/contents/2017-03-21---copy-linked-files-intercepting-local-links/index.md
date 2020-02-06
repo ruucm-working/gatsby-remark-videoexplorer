@@ -3,6 +3,7 @@ title: "Copying Linked Files and Intercepting Local Links"
 date: "2017-03-21"
 draft: false
 author: Daisy Buchanan
+lang: en
 tags:
   - remark
   - linked files
