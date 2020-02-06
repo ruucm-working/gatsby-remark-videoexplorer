@@ -4,45 +4,47 @@ import Img from "gatsby-image"
 import rehypeReact from "rehype-react"
 
 import styles from "../styles"
-import Counter from "../components/Counter"
+// import Counter from "../components/Counter"
 import Layout from "../layouts"
 import { rhythm, scale } from "../utils/typography"
+import { MDXRenderer } from "gatsby-plugin-mdx"
 
 // import "katex/dist/katex.min.css"
 
 const renderAst = new rehypeReact({
   createElement: React.createElement,
-  components: { "interactive-counter": Counter },
+  // components: { "interactive-counter": Counter },
 }).Compiler
 
 class BlogPostRoute extends React.Component {
   render() {
-    const post = this.props.data.markdownRemark
+    const post = this.props.data.mdx
+    console.log("TCL: BlogPostRoute -> render -> post", post)
 
     let tags
     let tagsSection
-    if (post.fields.tagSlugs) {
-      const tagsArray = post.fields.tagSlugs
-      tags = tagsArray.map((tag, i) => {
-        const divider = i < tagsArray.length - 1 && <span>{`, `}</span>
-        return (
-          <span key={tag}>
-            <Link to={tag}>{post.frontmatter.tags[i]}</Link>
-            {divider}
-          </span>
-        )
-      })
-      tagsSection = (
-        <span
-          css={{
-            fontStyle: `normal`,
-            textAlign: `left`,
-          }}
-        >
-          tagged {tags}
-        </span>
-      )
-    }
+    // if (post.fields.tagSlugs) {
+    //   const tagsArray = post.fields.tagSlugs
+    //   tags = tagsArray.map((tag, i) => {
+    //     const divider = i < tagsArray.length - 1 && <span>{`, `}</span>
+    //     return (
+    //       <span key={tag}>
+    //         <Link to={tag}>{post.frontmatter.tags[i]}</Link>
+    //         {divider}
+    //       </span>
+    //     )
+    //   })
+    //   tagsSection = (
+    //     <span
+    //       css={{
+    //         fontStyle: `normal`,
+    //         textAlign: `left`,
+    //       }}
+    //     >
+    //       tagged {tags}
+    //     </span>
+    //   )
+    // }
 
     return (
       <Layout location={this.props.location}>
@@ -55,7 +57,7 @@ class BlogPostRoute extends React.Component {
             <h1
               css={{
                 marginBottom: rhythm(1 / 6),
-                color: post.frontmatter.shadow,
+                // color: post.frontmatter.shadow,
               }}
             >
               {post.frontmatter.title}
@@ -77,7 +79,9 @@ class BlogPostRoute extends React.Component {
             className="toc"
           />
 
-          {renderAst(post.htmlAst)}
+          {/* {renderAst(post.htmlAst)} */}
+          <MDXRenderer>{post.body}</MDXRenderer>
+
           <hr
             css={{
               marginBottom: rhythm(1),
@@ -91,7 +95,7 @@ class BlogPostRoute extends React.Component {
               alignItems: `center`,
             }}
           >
-            <Img
+            {/* <Img
               alt={`Avatar of ${post.frontmatter.author.id}`}
               fixed={post.frontmatter.author.avatar.children[0].fixed}
               css={{
@@ -101,7 +105,7 @@ class BlogPostRoute extends React.Component {
                 marginBottom: 0,
               }}
               Tag="span"
-            />
+            /> */}
             <span
               css={{
                 color: styles.colors.light,
@@ -132,29 +136,31 @@ export default BlogPostRoute
 export const pageQuery = graphql`
   query($slug: String!) {
     mdx(fields: { slug: { eq: $slug } }) {
-      htmlAst
+      # htmlAst
+      body
       timeToRead
       tableOfContents
-      fields {
-        tagSlugs
-      }
+      # fields {
+      #   tagSlugs
+      # }
       frontmatter {
         title
         tags
         date(formatString: "MMMM DD, YYYY")
-        author {
-          id
-          bio
-          avatar {
-            children {
-              ... on ImageSharp {
-                fixed(width: 50, height: 50, quality: 75, grayscale: true) {
-                  ...GatsbyImageSharpFixed
-                }
-              }
-            }
-          }
-        }
+        author
+        # author {
+        #   id
+        #   bio
+        #   avatar {
+        #     children {
+        #       ... on ImageSharp {
+        #         fixed(width: 50, height: 50, quality: 75, grayscale: true) {
+        #           ...GatsbyImageSharpFixed
+        #         }
+        #       }
+        #     }
+        #   }
+        # }
       }
     }
   }
